@@ -76,7 +76,7 @@
                 >
                   <span v-html="skill.icon" class="skill-icon"></span>
                   <h3>{{ skill.title }}</h3>
-                  <div class="arrow">→</div>
+                  <!-- <div class="arrow">→</div> -->
                 </div>
               </div>
             </section>
@@ -153,7 +153,7 @@
                       </svg>
                     </a>
                   </div>
-                  <div class="project-arrow">↗</div>
+                  <!-- <div class="project-arrow">↗</div> -->
                 </div>
               </div>
             </section>
