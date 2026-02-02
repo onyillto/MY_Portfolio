@@ -497,6 +497,14 @@ const contactMethods = [
 ];
 </script>
 
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+</style>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap");
 
@@ -927,6 +935,7 @@ const contactMethods = [
 
 .project-info {
   flex: 1;
+  min-width: 0;
 }
 .project-info h3 {
   font-size: 18px;
@@ -1187,11 +1196,17 @@ const contactMethods = [
   align-items: center;
   justify-content: center;
   color: var(--accent-orange);
+  flex-shrink: 0;
 }
 
 .contact-icon :deep(svg) {
   width: 24px;
   height: 24px;
+}
+
+.contact-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .contact-info h4 {
@@ -1202,6 +1217,7 @@ const contactMethods = [
 .contact-info p {
   font-size: 16px;
   font-weight: 600;
+  word-break: break-word;
 }
 
 .cta-button {
@@ -1263,6 +1279,20 @@ const contactMethods = [
   .stats-row {
     flex-wrap: wrap;
     gap: 24px;
+  }
+
+  .contact-method {
+    padding: 16px;
+  }
+
+  .project-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .project-thumb {
+    width: 100%;
+    height: 140px;
   }
 }
 </style>
