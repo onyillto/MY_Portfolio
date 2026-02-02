@@ -87,6 +87,14 @@
                 <div class="main">RECENT</div>
                 <div class="sub">PROJECTS</div>
               </div>
+              <div class="project-notice">
+                <div class="notice-icon">🔒</div>
+                <p>
+                  Note: Some project URLs are inaccessible due to security and
+                  confidentiality reasons, but I can provide a walkthrough upon
+                  request.
+                </p>
+              </div>
               <div class="projects-list">
                 <div
                   v-for="(project, i) in projects"
@@ -94,11 +102,12 @@
                   class="project-item"
                   :style="{ animationDelay: `${i * 0.1}s` }"
                 >
-                  <div
-                    class="project-thumb"
-                    :style="{ background: project.gradient }"
-                  >
-                    {{ project.abbr }}
+                  <div class="project-thumb">
+                    <img
+                      v-if="project.image"
+                      :src="project.image"
+                      :alt="project.name"
+                    />
                   </div>
                   <div class="project-info">
                     <h3>{{ project.name }}</h3>
@@ -349,85 +358,88 @@ const projects = [
   {
     name: "CredNow Admin Dashboard",
     description:
-      "Admin dashboard with role-based access control using React.js & Next.js",
-    gradient: "linear-gradient(135deg, #10b981, #059669)",
-    abbr: "CN",
+      "Secure admin dashboard built with React.js and Next.js, featuring role-based access control (RBAC), user management, analytics, and real-time monitoring for financial operations.",
+    image: "/cred.png",
     githubLink: "https://github.com/onyillto/crednow",
     liveLink: "https://crednow.ng/",
   },
   {
     name: "Ngbuka Vendor Dashboard",
-    description: "Vendor management system with inventory & order tracking",
-    gradient: "linear-gradient(135deg, #f59e0b, #d97706)",
-    abbr: "NV",
+    description:
+      "Vendor portal for the Ngbuka auto-parts marketplace, enabling inventory management, order processing, performance tracking, and seamless communication with buyers and admins.",
+    image: "/ngbuka-vendor.png",
     githubLink: "https://github.com/onyillto/ngbuka-web",
     liveLink: "https://staging-app.ngbuka.com/Onboarding",
   },
   {
     name: "Moja Realestate",
     description:
-      "Sustainable farm estates & residential real estate development in Nigeria",
-    gradient: "linear-gradient(135deg, #1e40af, #3b82f6)",
-    abbr: "MR",
+      "Modern website for Moja Realestate, showcasing sustainable farm estates and residential developments in Nigeria with project galleries, transparent land offerings, and focus on eco-friendly infrastructure.",
+    image: "/moja.png",
     githubLink: null,
     liveLink: "https://www.mojarealestate.net/",
   },
   {
     name: "Mayas Consulting",
     description:
-      "Strategy, operations and growth consulting for African businesses",
-    gradient: "linear-gradient(135deg, #1e40af, #3b82f6)",
-    abbr: "MC", // changed from NC to avoid confusion with Ngbuka
+      "Professional website for Mayas Consulting, highlighting strategy, operations, and growth advisory services tailored for African businesses, with case studies, service details, and client-focused design.",
+    image: "/maya.png",
     githubLink: null,
     liveLink: "https://www.mayyasconsulting.com/",
   },
   {
     name: "Ngbuka Admin Dashboard",
-    description: "Admin panel for marketplace management & analytics",
-    gradient: "linear-gradient(135deg, #ef4444, #dc2626)",
-    abbr: "NA",
+    description:
+      "Comprehensive admin panel for the Ngbuka marketplace, providing tools for user oversight, transaction monitoring, analytics, content moderation, and platform-wide management.",
+    image: "/ngbuka-ad.png",
     githubLink: "https://github.com/onyillto/jenny-ngbuka-admin",
     liveLink: "https://staging-dashboard9spla.ngbuka.com/dashboard",
   },
   {
     name: "Ngbuka User App",
-    description: "E-commerce app with secure escrow & Paystack integration",
-    gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
-    abbr: "NU",
+    description:
+      "Frontend e-commerce platform for Ngbuka users, featuring product browsing, secure escrow payments via Paystack, order tracking, and a smooth buying experience for auto parts and services.",
+    image: "/user-ngbuka.png",
     githubLink: "https://github.com/onyillto/ngbuka-web",
     liveLink: "https://staging-app.ngbuka.com/",
   },
   {
     name: "Ngbuka Forum",
     description:
-      "Next.js discussion platform with SSR + backend (Node.js/Express) for spare parts community",
-    gradient: "linear-gradient(135deg, #06b6d4, #0891b2)",
-    abbr: "NF",
+      "Community discussion platform built with Next.js (SSR) and Node.js/Express backend, supporting threaded conversations, real-time interactions, and engagement for Nigeria's auto spare parts community.",
+    image: "/forum.png",
     githubLink: "https://github.com/onyillto/ngbuka-blog-forum",
     liveLink: "https://forum-staging.ngbuka.com/",
   },
   {
     name: "The Kliners OP",
-    description: "Home services platform with OAuth 2.0 & GCP deployment",
-    gradient: "linear-gradient(135deg, #3b82f6, #2563eb)",
-    abbr: "TK",
+    description:
+      "Home services platform connecting users with service providers, featuring secure authentication (OAuth 2.0), booking system, and deployment on Google Cloud Platform for reliability and scalability.",
+    image: "/kliners.png",
     githubLink: "https://github.com/onyillto/UK_KLINNER",
     liveLink: "https://klinner-web-app.vercel.app/auth/signin",
   },
   {
     name: "Bloomrydes Dashboard",
-    description: "Data visualization dashboard serving 10K+ users with Vue.js",
-    gradient: "linear-gradient(135deg, #ec4899, #db2777)",
-    abbr: "BR",
+    description:
+      "Interactive data visualization dashboard for Bloomrydes ride-sharing platform, built with Vue.js, displaying key metrics, user activity, trip analytics, and insights for over 10,000+ users.",
+    image: "/project-images/bloomrydes.png",
     githubLink: "#",
     liveLink: "#",
   },
   {
     name: "Bloomrydes API",
     description:
-      "RESTful API with 15+ features, WebSocket & real-time updates\n\nLinks available upon request due to security reasons",
-    gradient: "linear-gradient(135deg, #f43f5e, #e11d48)",
-    abbr: "BA",
+      "Scalable microservices backend for the Bloomrydes ride-sharing app (similar to Uber/Bolt), handling user auth, trip matching, real-time tracking via WebSockets, payments, and separate services for users, trips, transactions, and dashboards.",
+    image: "/post.png",
+    githubLink: null,
+    liveLink: null,
+  },
+  {
+    name: "Ngbuka Forum API",
+    description:
+      "RESTful + WebSocket API powering the Ngbuka forum, supporting user auth, post/reply creation, likes, moderation roles (admin/moderator), and real-time notifications — 15+ endpoints for community engagement.",
+    image: "/postman.png",
     githubLink: null,
     liveLink: null,
   },
@@ -498,7 +510,9 @@ const contactMethods = [
 </script>
 
 <style>
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -925,12 +939,19 @@ const contactMethods = [
   height: 70px;
   border-radius: 8px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  color: white;
+  background-color: var(--bg-dark);
+  overflow: hidden;
+}
+
+.project-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.project-item:hover .project-thumb img {
+  transform: scale(1.1);
 }
 
 .project-info {
@@ -991,6 +1012,20 @@ const contactMethods = [
 .project-item:hover .project-arrow {
   color: var(--accent-orange);
   transform: translateX(4px);
+}
+
+.project-notice {
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .tech-categories {
