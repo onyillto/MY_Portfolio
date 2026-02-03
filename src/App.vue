@@ -768,14 +768,20 @@ const contactMethods = [
   margin-bottom: 40px;
 }
 .section-title .main {
-  font-size: clamp(48px, 8vw, 80px);
+  font-size: clamp(28px, 7vw, 64px);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -2px;
   line-height: 0.9;
 }
+
+
+ 
+
+
+
 .section-title .sub {
-  font-size: clamp(48px, 8vw, 80px);
+  font-size: clamp(28px, 7vw, 64px);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -2px;
