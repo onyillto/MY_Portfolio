@@ -1,5 +1,5 @@
 <template>
-  <div class="portfolio-app">
+  <div class="portfolio-app" :class="{ 'light-mode': !isDarkMode }">
     <div class="noise-overlay"></div>
 
     <nav class="nav-container">
@@ -14,6 +14,45 @@
         >
           <span v-html="tab.icon"></span>
         </button>
+        <div class="nav-divider"></div>
+        <button
+          class="nav-tab theme-toggle"
+          @click="toggleTheme"
+          :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        >
+          <span v-if="isDarkMode">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </span>
+          <span v-else>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </span>
+        </button>
       </div>
     </nav>
 
@@ -22,7 +61,16 @@
       <aside class="profile-card">
         <div class="profile-inner">
           <div class="profile-image">
-            <img src="/profile.png" alt="Jay - Full Stack Developer" />
+            <img
+              v-if="isDarkMode"
+              src="/profile-bw.jpg"
+              alt="Onyinye Achomadu - Full Stack Developer"
+            />
+            <img
+              v-else
+              src="/profile.jpg"
+              alt="Onyinye Achomadu - Full Stack Developer"
+            />
           </div>
           <h1 class="profile-name">Onyinye Achomadu</h1>
           <div class="profile-badge"></div>
@@ -273,6 +321,11 @@
 import { ref } from "vue";
 
 const activeTab = ref(0);
+const isDarkMode = ref(true);
+
+const toggleTheme = () => {
+  isDarkMode.value = !isDarkMode.value;
+};
 
 const tabs = [
   {
@@ -524,18 +577,44 @@ const contactMethods = [
 
 .portfolio-app {
   --bg-dark: #0a0a0a;
+  --app-bg: #0a0a0a;
   --bg-card: #141414;
+  --nav-bg: rgba(30, 30, 30, 0.9);
+  --nav-border: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --item-border: rgba(255, 255, 255, 0.05);
+  --border-dashed: rgba(255, 255, 255, 0.1);
+
   --accent-orange: #ff6b35;
   --accent-lime: #c8ff00;
   --accent-purple: #a855f7;
+
   --text-primary: #ffffff;
   --text-secondary: #888888;
   --text-muted: #555555;
+
   font-family: "Syne", sans-serif;
-  background: var(--bg-dark);
+  background: var(--app-bg);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.portfolio-app.light-mode {
+  --app-bg: #f2f4f7;
+  --bg-card: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --nav-border: rgba(0, 0, 0, 0.1);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --item-border: rgba(0, 0, 0, 0.05);
+  --border-dashed: rgba(0, 0, 0, 0.1);
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
 }
 
 .slide-enter-active,
@@ -571,11 +650,12 @@ const contactMethods = [
 .nav-tabs {
   display: flex;
   gap: 8px;
-  background: rgba(30, 30, 30, 0.9);
+  background: var(--nav-bg);
   backdrop-filter: blur(20px);
   padding: 8px;
   border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--nav-border);
+  align-items: center;
 }
 
 .nav-tab {
@@ -593,16 +673,23 @@ const contactMethods = [
 }
 
 .nav-tab:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--hover-bg);
   color: var(--text-primary);
 }
 .nav-tab.active {
   background: var(--text-primary);
-  color: var(--bg-dark);
+  color: var(--app-bg);
 }
 .nav-tab :deep(svg) {
   width: 20px;
   height: 20px;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--nav-border);
+  margin: 0 4px;
 }
 
 .app-container {
@@ -722,7 +809,7 @@ const contactMethods = [
   font-size: 14px;
   line-height: 1.6;
   padding: 16px 0;
-  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  border-top: 1px dashed var(--border-dashed);
 }
 
 .social-links {
@@ -774,11 +861,6 @@ const contactMethods = [
   letter-spacing: -2px;
   line-height: 0.9;
 }
-
-
- 
-
-
 
 .section-title .sub {
   font-size: clamp(28px, 7vw, 64px);
@@ -843,7 +925,7 @@ const contactMethods = [
 }
 .skill-card.dark {
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-border);
 }
 
 .skill-card :deep(.skill-icon) {
@@ -896,7 +978,7 @@ const contactMethods = [
 }
 
 .skill-card.dark .arrow {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--hover-bg);
   color: var(--text-primary);
 }
 .skill-card.purple .arrow {
@@ -917,7 +999,7 @@ const contactMethods = [
   padding: 20px;
   background: var(--bg-card);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--item-border);
   transition: all 0.4s ease;
   cursor: pointer;
   animation: fadeInUp 0.5s ease forwards;
@@ -945,7 +1027,7 @@ const contactMethods = [
   height: 70px;
   border-radius: 8px;
   flex-shrink: 0;
-  background-color: var(--bg-dark);
+  background-color: var(--app-bg);
   overflow: hidden;
 }
 
@@ -984,7 +1066,7 @@ const contactMethods = [
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--item-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1059,7 +1141,7 @@ const contactMethods = [
   padding: 16px 20px;
   background: var(--bg-card);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--item-border);
   transition: all 0.3s ease;
   animation: fadeInUp 0.5s ease forwards;
   opacity: 0;
@@ -1141,7 +1223,7 @@ const contactMethods = [
   padding: 20px;
   background: var(--bg-card);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--item-border);
   transition: all 0.3s ease;
   animation: fadeInUp 0.5s ease forwards;
   opacity: 0;
@@ -1149,7 +1231,7 @@ const contactMethods = [
 
 .tool-item:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--card-border);
 }
 
 .tool-icon {
@@ -1215,7 +1297,7 @@ const contactMethods = [
   padding: 20px 24px;
   background: var(--bg-card);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--item-border);
   transition: all 0.3s ease;
   text-decoration: none;
   color: inherit;
