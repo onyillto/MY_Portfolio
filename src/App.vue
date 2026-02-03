@@ -72,7 +72,7 @@
               alt="Onyinye Achomadu - Full Stack Developer"
             />
           </div>
-          <h1 class="profile-name">Onyinye Achomadu</h1>
+          <h1 class="profile-name">Onyinye Achomadu J.</h1>
           <div class="profile-badge"></div>
           <p class="profile-bio">
             Full Stack JavaScript Developer with 3+ years of experience
