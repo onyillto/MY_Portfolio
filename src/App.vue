@@ -379,7 +379,7 @@ const socials = [
 ];
 
 const stats = [
-  { value: "+3", label: "Years of Experience" },
+  { value: "+5", label: "Years of Experience" },
   { value: "+20", label: "Projects Completed" },
   { value: "+10", label: "Happy Clients" },
 ];
