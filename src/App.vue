@@ -75,8 +75,7 @@
           <h1 class="profile-name">Onyinye Achomadu J.</h1>
           <div class="profile-badge"></div>
           <p class="profile-bio">
-            Full Stack JavaScript Developer with 5+ years of experience
-            specializing in Node.js, Express.js, and modern frontend frameworks.
+           Software Engineering student and Full-Stack Developer with 5+ years of hands-on experience building scalable web applications across Web2 and Web3 ecosystems. Passionate about crafting intuitive user experiences through clean code and modern technology stacks. Specializing in backend architecture with Node.js/Express.js, dynamic frontends using React, Vue, and Next.js, and blockchain development with Solidity and Foundry—turning complex ideas into elegant, production-ready solutions that bridge traditional and decentralized technologies.
           </p>
           <div class="social-links">
             <a
@@ -251,6 +250,25 @@
                     </div>
                   </div>
                 </div>
+                <div class="tech-category">
+                  <h3>Web3 & Blockchain</h3>
+                  <div class="tech-grid">
+                    <div
+                      v-for="(tech, i) in web3Stack"
+                      :key="tech.name"
+                      class="tech-item"
+                      :style="{ animationDelay: `${i * 0.1}s` }"
+                    >
+                      <div class="tech-icon" :class="tech.class">
+                        {{ tech.icon }}
+                      </div>
+                      <div class="tech-info">
+                        <h4>{{ tech.name }}</h4>
+                        <p>{{ tech.type }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -405,6 +423,11 @@ const skills = [
     color: "dark",
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
   },
+  {
+    title: "Solidity and Foundry",
+    color: "lime",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  },
 ];
 
 const projects = [
@@ -523,6 +546,21 @@ const frontendStack = [
   { name: "React", type: "UI Library", icon: "R", class: "react" },
   { name: "Vue.js", type: "Progressive Framework", icon: "V", class: "vue" },
   { name: "Tailwind CSS", type: "Utility CSS", icon: "T", class: "tailwind" },
+];
+
+const web3Stack = [
+  {
+    name: "Solidity",
+    type: "Smart Contracts",
+    icon: "S",
+    class: "solidity",
+  },
+  {
+    name: "Foundry",
+    type: "Development Framework",
+    icon: "F",
+    class: "foundry",
+  },
 ];
 
 const tools = [
@@ -1198,6 +1236,12 @@ const contactMethods = [
 }
 .tech-icon.tailwind {
   background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+}
+.tech-icon.solidity {
+  background: linear-gradient(135deg, #363636, #656565);
+}
+.tech-icon.foundry {
+  background: linear-gradient(135deg, #ff6b35, #ff9f43);
 }
 
 .tech-info h4 {
