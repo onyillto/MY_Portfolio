@@ -569,6 +569,7 @@ const tools = [
   { name: "Google Cloud", type: "Cloud Platform", icon: "GC", class: "gcloud" },
   { name: "VS Code", type: "Code Editor", icon: "VS", class: "vscode" },
   { name: "Postman", type: "API Testing", icon: "P", class: "postman" },
+  { name: "Swagger", type: "API Documentation", icon: "S", class: "swagger" },
   { name: "Jenkins", type: "CI/CD Pipeline", icon: "J", class: "jenkins" },
 ];
 
