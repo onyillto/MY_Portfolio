@@ -75,7 +75,7 @@
           <h1 class="profile-name">Onyinye Achomadu J.</h1>
           <div class="profile-badge"></div>
           <p class="profile-bio">
-            Full Stack JavaScript Developer with 3+ years of experience
+            Full Stack JavaScript Developer with 5+ years of experience
             specializing in Node.js, Express.js, and modern frontend frameworks.
           </p>
           <div class="social-links">
