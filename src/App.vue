@@ -436,6 +436,22 @@ const skills = [
 ];
 
 const projects = [
+{
+  name: "BritToken — ERC-20 Smart Contract",
+  description:
+    "Custom ERC-20 token smart contract written in Solidity and deployed on Ethereum Sepolia Testnet. Implements a minimal ERC-20 interface with total supply, balance tracking, and transfer logic. Tested with Hardhat and Chai, and verified on Sepolia Etherscan. Built as part of Web3Bridge Cohort 14 blockchain development training.",
+  image: "/ether.png",
+  githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_BACKEND",
+  liveLink: "https://sepolia.etherscan.io/address/0x69F31125289A1E6A84426473aA852c4E35ce12BE#code",
+},
+{
+  name: "JayToken DApp",
+  description:
+    "Decentralised ERC-20 token interface built with React and Vite, featuring MetaMask wallet integration, live on-chain balance queries, token transfers with Sepolia chain validation, and a session transaction log. No ethers.js — raw Ethereum JSON-RPC only. Smart contract written in Solidity and verified on Sepolia Etherscan.",
+  image: "/dapp.png",
+  githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_FRONTEND",
+  liveLink: "https://live-erc-20-brit-token-frontend.vercel.app/",
+},
   {
     name: "CredNow Admin Dashboard",
     description:
@@ -564,6 +580,18 @@ const web3Stack = [
     type: "Development Framework",
     icon: "F",
     class: "foundry",
+  },
+  {
+    name: "Hardhat",
+    type: "Development Framework",
+    icon: "H",
+    class: "hardhart",
+  },
+    {
+    name: "Remix",
+    type: "Development Framework",
+    icon: "R",
+    class: "remix",
   },
 ];
 
