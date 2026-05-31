@@ -453,6 +453,14 @@ const projects = [
   liveLink: "https://live-erc-20-brit-token-frontend.vercel.app/",
 },
   {
+    name: "MealPort — Food Delivery Platform",
+    description:
+      "Full-stack food delivery platform for the Nigerian market connecting customers to local restaurants. Features distance-based delivery fee calculation via GPS auto-resolve and manual geocoding, Paystack payment integration, vendor self-service dashboard, and a complete order lifecycle — all with graceful fallbacks when location lookup fails.",
+    image: "/mealport.png",
+    githubLink: null,
+    liveLink: "https://meal-port-menu-prod.vercel.app/",
+  },
+  {
     name: "CredNow Admin Dashboard",
     description:
       "Secure admin dashboard built with React.js and Next.js, featuring role-based access control (RBAC), user management, analytics, and real-time monitoring for financial operations.",
