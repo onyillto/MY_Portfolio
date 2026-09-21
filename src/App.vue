@@ -458,7 +458,7 @@ const projects = [
       "Full-stack food delivery platform for the Nigerian market connecting customers to local restaurants. Features distance-based delivery fee calculation via GPS auto-resolve and manual geocoding, Paystack payment integration, vendor self-service dashboard, and a complete order lifecycle — all with graceful fallbacks when location lookup fails.",
     image: "/mealport.png",
     githubLink: null,
-    liveLink: "https://meal-port-menu-prod.vercel.app/",
+    liveLink: "https://order.themealport.com/",
   },
   {
     name: "CredNow Admin Dashboard",
