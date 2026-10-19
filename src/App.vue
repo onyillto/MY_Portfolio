@@ -2,6 +2,46 @@
   <div class="portfolio-app" :class="{ 'light-mode': !isDarkMode }">
     <div class="noise-overlay"></div>
 
+    <Transition name="fade">
+      <div
+        v-if="lightbox"
+        class="lightbox"
+        role="dialog"
+        aria-modal="true"
+        @click.self="closeLightbox"
+      >
+        <button class="lightbox-close" @click="closeLightbox" aria-label="Close">
+          ✕
+        </button>
+        <button
+          v-if="lightbox.images.length > 1"
+          class="lightbox-nav prev"
+          @click="stepLightbox(-1)"
+          aria-label="Previous image"
+        >
+          ‹
+        </button>
+        <figure class="lightbox-figure">
+          <img
+            :src="lightbox.images[lightbox.index].src"
+            :alt="lightbox.images[lightbox.index].caption"
+          />
+          <figcaption>
+            {{ lightbox.images[lightbox.index].caption }}
+            <span>{{ lightbox.index + 1 }} / {{ lightbox.images.length }}</span>
+          </figcaption>
+        </figure>
+        <button
+          v-if="lightbox.images.length > 1"
+          class="lightbox-nav next"
+          @click="stepLightbox(1)"
+          aria-label="Next image"
+        >
+          ›
+        </button>
+      </div>
+    </Transition>
+
     <nav class="nav-container">
       <div class="nav-tabs">
         <button
@@ -11,6 +51,8 @@
           :class="{ active: activeTab === index }"
           @click="activeTab = index"
           :title="tab.name"
+          :aria-label="tab.name"
+          :aria-current="activeTab === index ? 'page' : undefined"
         >
           <span v-html="tab.icon"></span>
         </button>
@@ -19,6 +61,7 @@
           class="nav-tab theme-toggle"
           @click="toggleTheme"
           :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          :aria-label="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
         >
           <span v-if="isDarkMode">
             <svg
@@ -86,6 +129,7 @@
               rel="noopener noreferrer"
               class="social-link"
               :title="social.name"
+              :aria-label="social.name"
             >
               <span v-html="social.icon"></span>
             </a>
@@ -134,6 +178,97 @@
                 <div class="main">RECENT</div>
                 <div class="sub">PROJECTS</div>
               </div>
+
+              <!-- Featured: Briteck Harvest -->
+              <article class="featured-project">
+                <div class="featured-badges">
+                  <span class="badge badge-flagship">★ Flagship project</span>
+                  <span class="badge">In development</span>
+                  <span class="badge">🔒 Private repo</span>
+                </div>
+                <h3 class="featured-name">{{ featuredProject.name }}</h3>
+                <p class="featured-tagline">{{ featuredProject.tagline }}</p>
+
+                <div class="featured-gallery">
+                  <button
+                    v-for="(img, i) in featuredProject.images"
+                    :key="img.src"
+                    class="gallery-shot"
+                    :class="{ main: i === 0 }"
+                    @click="openLightbox(featuredProject.images, i)"
+                    :aria-label="`Enlarge screenshot: ${img.caption}`"
+                  >
+                    <img :src="img.src" :alt="img.caption" loading="lazy" />
+                    <span class="gallery-caption">{{ img.caption }}</span>
+                  </button>
+                </div>
+
+                <p class="featured-description">
+                  {{ featuredProject.description }}
+                </p>
+
+                <h4 class="featured-subhead">What makes it special</h4>
+                <ul class="featured-highlights">
+                  <li v-for="item in featuredProject.highlights" :key="item.title">
+                    <strong>{{ item.title }}</strong>
+                    <span>{{ item.text }}</span>
+                  </li>
+                </ul>
+
+                <details class="featured-diamond">
+                  <summary class="diamond-head">
+                    <span class="diamond-icon" aria-hidden="true">◆</span>
+                    <span class="diamond-title">
+                      <h4>{{ featuredProject.diamond.title }}</h4>
+                      <span class="diamond-teaser">{{
+                        featuredProject.diamond.teaser
+                      }}</span>
+                    </span>
+                    <span class="diamond-chevron" aria-hidden="true">⌄</span>
+                  </summary>
+                  <div class="diamond-body">
+                  <p class="diamond-intro">{{ featuredProject.diamond.intro }}</p>
+                  <ol class="diamond-reasons">
+                    <li
+                      v-for="reason in featuredProject.diamond.reasons"
+                      :key="reason.title"
+                    >
+                      <strong>{{ reason.title }}</strong>
+                      <span>{{ reason.text }}</span>
+                    </li>
+                  </ol>
+                  <pre class="diamond-diagram">{{ featuredProject.diamond.diagram }}</pre>
+                  <div class="diamond-proof">
+                    <span
+                      v-for="fact in featuredProject.diamond.facts"
+                      :key="fact"
+                      >✓ {{ fact }}</span
+                    >
+                  </div>
+                  <a
+                    class="diamond-link"
+                    :href="featuredProject.diamond.contractUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Verify the live contract on Celo Sepolia ↗</a
+                  >
+                  </div>
+                </details>
+
+                <div class="featured-stack">
+                  <span v-for="tech in featuredProject.stack" :key="tech">{{
+                    tech
+                  }}</span>
+                </div>
+
+                <div class="featured-walkthrough">
+                  <p>{{ featuredProject.walkthrough }}</p>
+                  <a class="cta-button" :href="featuredProject.walkthroughHref"
+                    >Request a live walkthrough →</a
+                  >
+                </div>
+              </article>
+
               <div class="project-notice">
                 <div class="notice-icon">🔒</div>
                 <p>
@@ -157,7 +292,12 @@
                     />
                   </div>
                   <div class="project-info">
-                    <h3>{{ project.name }}</h3>
+                    <h3>
+                      {{ project.name }}
+                      <span v-if="project.status" class="project-status">{{
+                        project.status
+                      }}</span>
+                    </h3>
                     <p>{{ project.description }}</p>
                   </div>
                   <div class="project-links">
@@ -165,8 +305,10 @@
                       v-if="project.githubLink"
                       :href="project.githubLink"
                       target="_blank"
+                      rel="noopener noreferrer"
                       class="project-link"
                       title="View Code"
+                      aria-label="View Code"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -183,8 +325,10 @@
                       v-if="project.liveLink"
                       :href="project.liveLink"
                       target="_blank"
+                      rel="noopener noreferrer"
                       class="project-link"
                       title="Live Demo"
+                      aria-label="Live Demo"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -275,7 +419,7 @@
             <!-- Tools Section -->
             <section v-else-if="activeTab === 3" key="tools" class="section">
               <div class="section-title">
-                <div class="main">PREMIUM</div>
+                <div class="main">DEV</div>
                 <div class="sub">TOOLS</div>
               </div>
               <div class="tools-grid">
@@ -309,11 +453,13 @@
                   create something amazing together.
                 </p>
                 <div class="contact-methods">
-                  <a
+                  <component
+                    :is="method.href ? 'a' : 'div'"
                     v-for="(method, i) in contactMethods"
                     :key="method.label"
                     :href="method.href"
                     class="contact-method"
+                    :class="{ static: !method.href }"
                     :style="{ animationDelay: `${i * 0.1}s` }"
                   >
                     <div class="contact-icon">
@@ -323,9 +469,11 @@
                       <h4>{{ method.label }}</h4>
                       <p>{{ method.value }}</p>
                     </div>
-                  </a>
+                  </component>
                 </div>
-                <button class="cta-button">Get In Touch →</button>
+                <a class="cta-button" href="mailto:Achomaduonyinye@gmail.com"
+                  >Get In Touch →</a
+                >
               </div>
             </section>
           </Transition>
@@ -336,13 +484,73 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 
 const activeTab = ref(0);
-const isDarkMode = ref(true);
+
+const lightbox = ref(null);
+
+const openLightbox = (images, index) => {
+  lightbox.value = { images, index };
+};
+
+const closeLightbox = () => {
+  lightbox.value = null;
+};
+
+const stepLightbox = (dir) => {
+  const { images, index } = lightbox.value;
+  lightbox.value = {
+    images,
+    index: (index + dir + images.length) % images.length,
+  };
+};
+
+const onKeydown = (e) => {
+  if (!lightbox.value) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowRight") stepLightbox(1);
+  if (e.key === "ArrowLeft") stepLightbox(-1);
+};
+
+// Keep the active tab in the URL hash so tabs can be linked to and the back button works
+const syncTabFromHash = () => {
+  const index = tabs.findIndex((t) => `#${t.id}` === window.location.hash);
+  activeTab.value = index === -1 ? 0 : index;
+};
+
+watch(activeTab, (index) => {
+  const hash = index === 0 ? "" : `#${tabs[index].id}`;
+  if (window.location.hash !== hash) {
+    history.pushState(null, "", hash || window.location.pathname);
+  }
+});
+
+onMounted(() => {
+  syncTabFromHash();
+  window.addEventListener("popstate", syncTabFromHash);
+  window.addEventListener("keydown", onKeydown);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("popstate", syncTabFromHash);
+  window.removeEventListener("keydown", onKeydown);
+});
+
+const getInitialTheme = () => {
+  try {
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved === "dark";
+  } catch {}
+  return !window.matchMedia?.("(prefers-color-scheme: light)").matches;
+};
+
+const isDarkMode = ref(getInitialTheme());
 
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value;
+  try {
+    localStorage.setItem("theme", isDarkMode.value ? "dark" : "light");
+  } catch {}
 };
 
 const tabs = [
@@ -402,9 +610,9 @@ const socials = [
 ];
 
 const stats = [
-  { value: "+5", label: "Years of Experience" },
-  { value: "+20", label: "Projects Completed" },
-  { value: "+10", label: "Happy Clients" },
+  { value: "5+", label: "Years of Experience" },
+  { value: "20+", label: "Projects Completed" },
+  { value: "10+", label: "Happy Clients" },
 ];
 
 const skills = [
@@ -435,117 +643,238 @@ const skills = [
   },
 ];
 
+const featuredProject = {
+  name: "Briteck Harvest",
+  tagline:
+    "Verified, staged farm funding for Nigeria. Money moves only when the work is proven.",
+  description:
+    "My most ambitious build, and the one I care about most. Nigerian smallholder farmers grow most of the country's food but can't get credit, because lenders have no way to confirm the money reaches the field. Briteck Harvest fixes the trust problem instead of the money problem: funders' money sits in an on-chain escrow contract and is released one crop stage at a time, only after three independent agronomists verify the farm in person and their readings agree. Before any land is even approved, the platform automatically screens the area for nearby violent incidents, so funders know the security risk before they put in a naira.",
+  highlights: [
+    {
+      title: "Three-agronomist verification",
+      text: "Every stage is checked by a randomly drawn panel of three agronomists. None can live in the farm's district or check two stages in a row, so collusion is hard by design.",
+    },
+    {
+      title: "Automatic security screening",
+      text: "Before land is approved or anyone invests, the platform locates the farm by GPS and scans 24 months of news for kidnappings, banditry, farmer–herder clashes and insurgent attacks within 50 km. Every incident needs a date, a confirmable source and a place; repeats are merged. Fixed, explainable rules grade the area low, medium or high risk, it re-checks every two weeks while a project is live, and the report's fingerprint goes on the blockchain.",
+    },
+    {
+      title: "Sealed readings",
+      text: "Each agent submits a cryptographic fingerprint of their readings before anyone reveals, so no one can copy another agent's numbers.",
+    },
+    {
+      title: "Checked against the farm's history",
+      text: "Readings that contradict the record, like soil pH jumping overnight, are frozen for review. Outvoted agents lose reputation and their harvest bonus.",
+    },
+    {
+      title: "Every money event on-chain",
+      text: "Project openings, deposits, stage releases, cancellations and harvest settlements are written to the escrow smart contract, each with a transaction hash anyone can look up.",
+    },
+    {
+      title: "Tamper-evident records",
+      text: "Every reading, photo, signature and payment is fingerprinted and recorded, so anyone can prove it was never altered.",
+    },
+    {
+      title: "Funders paid first",
+      text: "A coded payout waterfall pays funders their principal and target return first, then agent accuracy bonuses, the platform, and the farmer's share of the surplus.",
+    },
+    {
+      title: "Full operations console",
+      text: "Admin tools for KYC reviews, disputes, pledges, escrow balances, blockchain sync with automatic retries, and a complete audit log.",
+    },
+  ],
+  diamond: {
+    title: "Why the escrow is an EIP-2535 Diamond proxy",
+    teaser:
+      "One permanent address for funders' money, upgradable piece by piece. Tap to see the reasoning.",
+    intro:
+      "Funders' money has to sit in one smart contract for a whole crop cycle, four to six months, while the platform's rules keep improving. A normal contract forces a bad choice: freeze the code forever, or move everyone's money to a new address every time it changes. I built the escrow as a Diamond so that choice never has to be made.",
+    reasons: [
+      {
+        title: "One permanent address",
+        text: "Funders, the backend and the block explorer only ever deal with a single contract address. Code can improve without ever migrating anyone's money.",
+      },
+      {
+        title: "Upgrade one piece at a time",
+        text: "The logic is split into facets: a public escrow facet (deposit, refund, claim) and an admin facet (projects, stage releases, settlement). One facet can be fixed or replaced without touching the others or the funds.",
+      },
+      {
+        title: "Upgrades you can verify",
+        text: "The Diamond Loupe lets anyone ask the contract which code handles each function, so every upgrade can be checked on-chain instead of taken on trust.",
+      },
+      {
+        title: "Room to grow",
+        text: "A single Ethereum contract is capped at 24 KB. Facets let the escrow keep adding features without hitting that ceiling.",
+      },
+      {
+        title: "Funders' exits can't be switched off",
+        text: "Only the owner (a multisig) can cut in new code or change where money goes. Pausing stops deposits and releases, but refunds and claims always keep working.",
+      },
+    ],
+    diagram: `            ┌──────────────── Diamond (one address) ────────────────┐
+ funders ──►│  EscrowFacet       deposit · refund · claim           │
+            │  EscrowAdminFacet  createProject · releaseStage ·     │
+ backend ──►│                    attest · settle · pause            │
+            │  DiamondCut / Loupe / Ownership  upgrades, in public  │
+            └───────────────────────────────────────────────────────┘
+                 stage released only after 3 agronomists agree`,
+    facts: [
+      "25 passing contract tests",
+      "Live on Celo Sepolia",
+      "USDT stablecoin escrow",
+      "Payout split fixed before anyone invests",
+    ],
+    contractUrl:
+      "https://celo-sepolia.blockscout.com/address/0x69F31125289A1E6A84426473aA852c4E35ce12BE",
+  },
+  stack: [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Node.js",
+    "ethers.js",
+    "Solidity",
+    "EIP-2535 Diamond",
+    "Hardhat",
+    "Celo",
+  ],
+  images: [
+    {
+      src: "/projects/britharvest-landing.jpg",
+      caption: "Public site for funders, farmers, land owners and agronomists",
+    },
+    {
+      src: "/projects/britharvest-admin.jpg",
+      caption: "Admin overview: money pledged, held in escrow and released, and projects by stage",
+    },
+    {
+      src: "/projects/britharvest-chain.jpg",
+      caption: "Blockchain log: every escrow event with its on-chain transaction hash",
+    },
+    {
+      src: "/projects/britharvest-security.jpg",
+      caption: "Automatic security check: incidents near the farm, sourced, located and scored",
+    },
+  ],
+  walkthrough:
+    "I'm keeping the source private while it's in development. I can run the full platform from my development environment and walk you through it live: a funding cycle from pledge to verified stage release, with every transaction checkable on the blockchain explorer.",
+  walkthroughHref:
+    "mailto:Achomaduonyinye@gmail.com?subject=Briteck%20Harvest%20walkthrough",
+};
+
 const projects = [
-{
-  name: "BritToken — ERC-20 Smart Contract",
-  description:
-    "Custom ERC-20 token smart contract written in Solidity and deployed on Ethereum Sepolia Testnet. Implements a minimal ERC-20 interface with total supply, balance tracking, and transfer logic. Tested with Hardhat and Chai, and verified on Sepolia Etherscan. Built as part of Web3Bridge Cohort 14 blockchain development training.",
-  image: "/ether.png",
-  githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_BACKEND",
-  liveLink: "https://sepolia.etherscan.io/address/0x69F31125289A1E6A84426473aA852c4E35ce12BE#code",
-},
-{
-  name: "JayToken DApp",
-  description:
-    "Decentralised ERC-20 token interface built with React and Vite, featuring MetaMask wallet integration, live on-chain balance queries, token transfers with Sepolia chain validation, and a session transaction log. No ethers.js — raw Ethereum JSON-RPC only. Smart contract written in Solidity and verified on Sepolia Etherscan.",
-  image: "/dapp.png",
-  githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_FRONTEND",
-  liveLink: "https://live-erc-20-brit-token-frontend.vercel.app/",
-},
   {
     name: "MealPort — Food Delivery Platform",
     description:
       "Full-stack food delivery platform for the Nigerian market connecting customers to local restaurants. Features distance-based delivery fee calculation via GPS auto-resolve and manual geocoding, Paystack payment integration, vendor self-service dashboard, and a complete order lifecycle — all with graceful fallbacks when location lookup fails.",
-    image: "/mealport.png",
+    image: "/projects/mealport.jpg",
     githubLink: null,
     liveLink: "https://order.themealport.com/",
   },
   {
-    name: "CredNow Admin Dashboard",
+    name: "Vouccom — Asset Voucher Draws",
     description:
-      "Secure admin dashboard built with React.js and Next.js, featuring role-based access control (RBAC), user management, analytics, and real-time monitoring for financial operations.",
-    image: "/cred.png",
-    githubLink: "https://github.com/onyillto/crednow",
-    liveLink: "https://crednow.ng/",
-  },
-  {
-   name: "Ng Service - Job Marketplace",
-  description: "A comprehensive job search and booking platform with real-time notifications, automated job approvals, and seamless vendor-client communication through integrated dashboards.",
-    image: "/ttt.png",
-    githubLink: "https://github.com/onyillto/ngbuka-web",
-    liveLink: "https://ng-service-sable.vercel.app/",
-  },
-  {
-    name: "Moja Realestate",
-    description:
-      "Modern website for Moja Realestate, showcasing sustainable farm estates and residential developments in Nigeria with project galleries, transparent land offerings, and focus on eco-friendly infrastructure.",
-    image: "/moja.png",
+      "Next.js platform for Nigerian users to win cars and other premium assets by buying low-cost vouchers into transparent live draws. Features asset listings with draw countdowns, secure voucher checkout, wallet top-ups, a user dashboard for tracking entries, and a winner verification and handover flow — with companion iOS and Android apps.",
+    status: "In testing",
+    image: "/projects/vouccom.jpg",
     githubLink: null,
-    liveLink: "https://www.mojarealestate.net/",
-  },
-  {
-    name: "Mayas Consulting",
-    description:
-      "Professional website for Mayas Consulting, highlighting strategy, operations, and growth advisory services tailored for African businesses, with case studies, service details, and client-focused design.",
-    image: "/maya.png",
-    githubLink: null,
-    liveLink: "https://www.mayyasconsulting.com/",
-  },
-  {
-    name: "Ngbuka Admin Dashboard",
-    description:
-      "Comprehensive admin panel for the Ngbuka marketplace, providing tools for user oversight, transaction monitoring, analytics, content moderation, and platform-wide management.",
-    image: "/ngbuka-ad.png",
-    githubLink: "https://github.com/onyillto/jenny-ngbuka-admin",
-    liveLink: "https://staging-dashboard9spla.ngbuka.com/dashboard",
+    liveLink: "https://vouccom.com/",
   },
   {
     name: "Ngbuka User App",
     description:
       "Frontend e-commerce platform for Ngbuka users, featuring product browsing, secure escrow payments via Paystack, order tracking, and a smooth buying experience for auto parts and services.",
-    image: "/user-ngbuka.png",
+    image: "/projects/user-ngbuka.jpg",
     githubLink: "https://github.com/onyillto/ngbuka-web",
     liveLink: "https://staging-app.ngbuka.com/",
+  },
+  {
+    name: "Ngbuka Admin Dashboard",
+    description:
+      "Comprehensive admin panel for the Ngbuka marketplace, providing tools for user oversight, transaction monitoring, analytics, content moderation, and platform-wide management.",
+    image: "/projects/ngbuka-ad.jpg",
+    githubLink: "https://github.com/onyillto/jenny-ngbuka-admin",
+    liveLink: "https://staging-dashboard9spla.ngbuka.com/dashboard",
   },
   {
     name: "Ngbuka Forum",
     description:
       "Community discussion platform built with Next.js (SSR) and Node.js/Express backend, supporting threaded conversations, real-time interactions, and engagement for Nigeria's auto spare parts community.",
-    image: "/forum.png",
+    image: "/projects/forum.jpg",
     githubLink: "https://github.com/onyillto/ngbuka-blog-forum",
     liveLink: "https://forum-staging.ngbuka.com/",
-  },
-  {
-    name: "The Kliners OP",
-    description:
-      "Home services platform connecting users with service providers, featuring secure authentication (OAuth 2.0), booking system, and deployment on Google Cloud Platform for reliability and scalability.",
-    image: "/kliners.png",
-    githubLink: "https://github.com/onyillto/UK_KLINNER",
-    liveLink: "https://klinner-web-app.vercel.app/auth/signin",
-  },
-  {
-    name: "Bloomrydes Dashboard",
-    description:
-      "Interactive data visualization dashboard for Bloomrydes ride-sharing platform, built with Vue.js, displaying key metrics, user activity, trip analytics, and insights for over 10,000+ users.",
-    image: "/project-images/bloomrydes.png",
-    githubLink: "#",
-    liveLink: "#",
-  },
-  {
-    name: "Bloomrydes API",
-    description:
-      "Scalable microservices backend for the Bloomrydes ride-sharing app (similar to Uber/Bolt), handling user auth, trip matching, real-time tracking via WebSockets, payments, and separate services for users, trips, transactions, and dashboards.",
-    image: "/post.png",
-    githubLink: null,
-    liveLink: null,
   },
   {
     name: "Ngbuka Forum API",
     description:
       "RESTful + WebSocket API powering the Ngbuka forum, supporting user auth, post/reply creation, likes, moderation roles (admin/moderator), and real-time notifications — 15+ endpoints for community engagement.",
-    image: "/postman.png",
+    image: "/projects/postman.jpg",
     githubLink: null,
     liveLink: null,
+  },
+  {
+    name: "CredNow Admin Dashboard",
+    description:
+      "Secure admin dashboard built with React.js and Next.js, featuring role-based access control (RBAC), user management, analytics, and real-time monitoring for financial operations.",
+    image: "/projects/cred.jpg",
+    githubLink: "https://github.com/onyillto/crednow",
+    liveLink: "https://crednow.ng/",
+  },
+  {
+    name: "Bloomrydes API",
+    description:
+      "Scalable microservices backend for the Bloomrydes ride-sharing app (similar to Uber/Bolt), handling user auth, trip matching, real-time tracking via WebSockets, payments, and separate services for users, trips, transactions, and dashboards.",
+    image: "/projects/post.jpg",
+    githubLink: null,
+    liveLink: null,
+  },
+  {
+    name: "Bloomrydes Dashboard",
+    description:
+      "Interactive data visualization dashboard for Bloomrydes ride-sharing platform, built with Vue.js, displaying key metrics, user activity, trip analytics, and insights for over 10,000+ users.",
+    image: null,
+    githubLink: null,
+    liveLink: null,
+  },
+  {
+    name: "Ng Service - Job Marketplace",
+    description: "A comprehensive job search and booking platform with real-time notifications, automated job approvals, and seamless vendor-client communication through integrated dashboards.",
+    image: "/projects/ttt.jpg",
+    githubLink: "https://github.com/onyillto/ngbuka-web",
+    liveLink: "https://ng-service-sable.vercel.app/",
+  },
+  {
+    name: "The Kliners OP",
+    description:
+      "Home services platform connecting users with service providers, featuring secure authentication (OAuth 2.0), booking system, and deployment on Google Cloud Platform for reliability and scalability.",
+    image: "/projects/kliners.jpg",
+    githubLink: "https://github.com/onyillto/UK_KLINNER",
+    liveLink: "https://klinner-web-app.vercel.app/auth/signin",
+  },
+  {
+    name: "JayToken DApp",
+    description:
+    "Decentralised ERC-20 token interface built with React and Vite, featuring MetaMask wallet integration, live on-chain balance queries, token transfers with Sepolia chain validation, and a session transaction log. No ethers.js — raw Ethereum JSON-RPC only. Smart contract written in Solidity and verified on Sepolia Etherscan.",
+    image: "/projects/dapp.jpg",
+    githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_FRONTEND",
+    liveLink: "https://live-erc-20-brit-token-frontend.vercel.app/",
+  },
+  {
+    name: "BritToken — ERC-20 Smart Contract",
+    description:
+    "Custom ERC-20 token smart contract written in Solidity and deployed on Ethereum Sepolia Testnet. Implements a minimal ERC-20 interface with total supply, balance tracking, and transfer logic. Tested with Hardhat and Chai, and verified on Sepolia Etherscan. Built as part of Web3Bridge Cohort 14 blockchain development training.",
+    image: "/projects/ether.jpg",
+    githubLink: "https://github.com/onyillto/LIVE_ERC_20_BRIT_TOKEN_BACKEND",
+    liveLink: "https://sepolia.etherscan.io/address/0x69F31125289A1E6A84426473aA852c4E35ce12BE#code",
+  },
+  {
+    name: "Mayas Consulting",
+    description:
+      "Professional website for Mayas Consulting, highlighting strategy, operations, and growth advisory services tailored for African businesses, with case studies, service details, and client-focused design.",
+    image: "/projects/maya.jpg",
+    githubLink: null,
+    liveLink: "https://www.mayyasconsulting.com/",
   },
 ];
 
@@ -593,7 +922,7 @@ const web3Stack = [
     name: "Hardhat",
     type: "Development Framework",
     icon: "H",
-    class: "hardhart",
+    class: "hardhat",
   },
     {
     name: "Remix",
@@ -629,13 +958,13 @@ const contactMethods = [
   {
     label: "Location",
     value: "Lagos, Nigeria",
-    href: "#",
+    href: null,
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
   },
   {
     label: "Availability",
     value: "Open for Opportunities",
-    href: "#",
+    href: null,
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
   },
 ];
@@ -925,6 +1254,7 @@ const contactMethods = [
 
 .content-area {
   flex: 1;
+  min-width: 0;
 }
 .sections-wrapper {
   min-height: 600px;
@@ -987,7 +1317,6 @@ const contactMethods = [
   border-radius: 16px;
   position: relative;
   transition: all 0.4s ease;
-  cursor: pointer;
 }
 
 .skill-card:hover {
@@ -1080,7 +1409,6 @@ const contactMethods = [
   border-radius: 16px;
   border: 1px solid var(--item-border);
   transition: all 0.4s ease;
-  cursor: pointer;
   animation: fadeInUp 0.5s ease forwards;
   opacity: 0;
 }
@@ -1130,6 +1458,39 @@ const contactMethods = [
   font-weight: 600;
   margin-bottom: 4px;
 }
+.project-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+  margin-left: 8px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-family: "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #f5b400;
+  background: rgba(245, 180, 0, 0.12);
+  border: 1px solid rgba(245, 180, 0, 0.4);
+}
+
+.project-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
 .project-info p {
   color: var(--text-secondary);
   font-size: 14px;
@@ -1284,6 +1645,13 @@ const contactMethods = [
 .tech-icon.foundry {
   background: linear-gradient(135deg, #ff6b35, #ff9f43);
 }
+.tech-icon.hardhat {
+  background: linear-gradient(135deg, #fff04d, #f0d800);
+  color: #000;
+}
+.tech-icon.remix {
+  background: linear-gradient(135deg, #2f6fd1, #1e4f9e);
+}
 
 .tech-info h4 {
   font-size: 16px;
@@ -1346,6 +1714,10 @@ const contactMethods = [
 .tool-icon.postman {
   background: #ff6c37;
 }
+.tool-icon.swagger {
+  background: #85ea2d;
+  color: #000;
+}
 .tool-icon.jenkins {
   background: linear-gradient(135deg, #d33833, #ef3d3d);
 }
@@ -1390,7 +1762,7 @@ const contactMethods = [
   opacity: 0;
 }
 
-.contact-method:hover {
+.contact-method:not(.static):hover {
   border-color: var(--accent-orange);
   transform: translateX(8px);
 }
@@ -1444,6 +1816,7 @@ const contactMethods = [
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-decoration: none;
 }
 
 .cta-button:hover {
@@ -1451,8 +1824,477 @@ const contactMethods = [
   box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
 }
 
+/* Featured project */
+.featured-project {
+  background: var(--bg-card);
+  border: 1px solid rgba(200, 255, 0, 0.35);
+  border-radius: 24px;
+  padding: 28px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.featured-project::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-lime), var(--accent-orange));
+}
+
+.featured-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.badge {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 50px;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.badge-flagship {
+  background: var(--accent-lime);
+  border-color: var(--accent-lime);
+  color: var(--bg-dark);
+  font-weight: 700;
+}
+
+.featured-name {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.featured-tagline {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 8px 0 24px;
+}
+
+.featured-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.gallery-shot {
+  position: relative;
+  border: 1px solid var(--item-border);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0;
+  background: var(--app-bg);
+  cursor: zoom-in;
+  aspect-ratio: 16 / 9;
+}
+
+.gallery-shot.main {
+  grid-column: 1 / -1;
+}
+
+.gallery-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.gallery-shot:hover img {
+  transform: scale(1.03);
+}
+
+.gallery-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24px 12px 10px;
+  font-size: 12px;
+  text-align: left;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+}
+
+.featured-description {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.featured-subhead {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.featured-highlights {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.featured-highlights li {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--item-border);
+  background: var(--app-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.featured-highlights li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.featured-highlights strong {
+  font-size: 15px;
+}
+
+.featured-highlights span {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.featured-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.featured-stack span {
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--hover-bg);
+}
+
+.featured-walkthrough {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px dashed var(--accent-orange);
+  background: rgba(255, 107, 53, 0.06);
+}
+
+.featured-walkthrough p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.featured-diamond {
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(168, 85, 247, 0.12),
+    rgba(168, 85, 247, 0.02)
+  );
+}
+
+.diamond-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.diamond-head::-webkit-details-marker {
+  display: none;
+}
+
+.diamond-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diamond-teaser {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.diamond-chevron {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-purple);
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  padding-bottom: 6px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.featured-diamond[open] .diamond-chevron {
+  transform: rotate(180deg);
+  padding-bottom: 0;
+  padding-top: 6px;
+}
+
+.diamond-head:hover .diamond-chevron {
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.featured-diamond[open] .diamond-teaser {
+  display: none;
+}
+
+.diamond-body {
+  margin-top: 16px;
+  animation: fadeInUp 0.35s ease;
+}
+
+.diamond-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-purple);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.diamond-head h4 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.diamond-intro {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.diamond-reasons {
+  list-style: none;
+  counter-reset: reason;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.diamond-reasons li {
+  counter-increment: reason;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  column-gap: 12px;
+  row-gap: 2px;
+}
+
+.diamond-reasons li::before {
+  content: counter(reason);
+  grid-row: span 2;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-purple);
+  color: var(--accent-purple);
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diamond-reasons strong {
+  font-size: 15px;
+}
+
+.diamond-reasons span {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.diamond-diagram {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--app-bg);
+  border: 1px solid var(--item-border);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.diamond-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.diamond-link {
+  display: inline-block;
+  color: var(--accent-purple);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.diamond-link:hover {
+  color: var(--accent-orange);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 64px;
+}
+
+.lightbox-figure {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.lightbox-figure img {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
+}
+
+.lightbox-figure figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  color: #ddd;
+  font-size: 14px;
+}
+
+.lightbox-figure figcaption span {
+  font-family: "Space Mono", monospace;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background: var(--accent-orange);
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+  font-size: 18px;
+}
+
+.lightbox-nav.prev {
+  left: 12px;
+}
+
+.lightbox-nav.next {
+  right: 12px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 /* Mobile Responsive */
 @media (max-width: 1024px) {
+  .featured-project {
+    padding: 20px;
+  }
+
+  .featured-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-gallery {
+    gap: 8px;
+  }
+
+  .featured-gallery .gallery-shot:not(.main) .gallery-caption {
+    display: none;
+  }
+
+  .lightbox {
+    padding: 16px;
+  }
+
+  .lightbox-nav {
+    top: auto;
+    bottom: 20px;
+  }
+
   .app-container {
     flex-direction: column;
     padding: 100px 20px 40px;
