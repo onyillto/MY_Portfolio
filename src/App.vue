@@ -343,6 +343,25 @@
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
                     </a>
+                    <a
+                      v-if="project.videoLink"
+                      :href="project.videoLink"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="project-link"
+                      title="Watch Demo Video"
+                      aria-label="Watch Demo Video"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="10 8 16 12 10 16 10 8" />
+                      </svg>
+                    </a>
                   </div>
                   <!-- <div class="project-arrow">↗</div> -->
                 </div>
@@ -771,7 +790,8 @@ const projects = [
     status: "In progress",
     image: "/projects/armari.jpg",
     githubLink: null,
-    liveLink: null,
+    liveLink: "https://clothing-ecommerce-navy.vercel.app/",
+    videoLink: "https://www.instagram.com/reel/DewZFR-NmG9/",
   },
   {
     name: "MealPort — Food Delivery Platform",
