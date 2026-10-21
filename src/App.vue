@@ -765,9 +765,9 @@ const featuredProject = {
 
 const projects = [
   {
-    name: "Armari — Fashion Store with AI Virtual Try-On",
+    name: "Armari — AI Virtual Try-On Fashion Store",
     description:
-      "React + TypeScript storefront for a clothing brand. Shoppers filter the catalogue by category, price, colour and size, pick a size, and book items for pickup or delivery with a payment-confirmation step. Features AI virtual try-on: upload a photo, crop it in a built-in editor, and see a top on yourself, powered by the IDM-VTON model through a serverless function.",
+      "AI virtual try-on for a fashion store: shoppers upload a photo, frame it in a built-in drag-and-zoom cropper, and see themselves wearing a shirt in about 20 seconds — powered by the IDM-VTON diffusion model, called securely through a serverless function. Around it sits a full React + TypeScript storefront with catalogue filters by category, price, colour and size, size selection, and booking for pickup or delivery with a payment-confirmation step.",
     status: "In progress",
     image: "/projects/armari.jpg",
     githubLink: null,
