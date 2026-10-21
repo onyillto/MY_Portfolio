@@ -765,6 +765,15 @@ const featuredProject = {
 
 const projects = [
   {
+    name: "Armari — Fashion Store with AI Virtual Try-On",
+    description:
+      "React + TypeScript storefront for a clothing brand. Shoppers filter the catalogue by category, price, colour and size, pick a size, and book items for pickup or delivery with a payment-confirmation step. Features AI virtual try-on: upload a photo, crop it in a built-in editor, and see a top on yourself, powered by the IDM-VTON model through a serverless function.",
+    status: "In progress",
+    image: "/projects/armari.jpg",
+    githubLink: null,
+    liveLink: null,
+  },
+  {
     name: "MealPort — Food Delivery Platform",
     description:
       "Full-stack food delivery platform for the Nigerian market connecting customers to local restaurants. Features distance-based delivery fee calculation via GPS auto-resolve and manual geocoding, Paystack payment integration, vendor self-service dashboard, and a complete order lifecycle — all with graceful fallbacks when location lookup fails.",
